@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create-schema" author="vlad.bakshanskij">
+        <sql>CREATE SCHEMA IF NOT EXISTS ping_bot</sql>
+    </changeSet>
+
+    <changeSet id="create-table-projects" author="vlad.bakshanskij">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="projects" schemaName="ping_bot"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="projects" schemaName="ping_bot">
+            <column name="id" type="bigint" remarks="ИД проекта в gitlab">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="path" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="namespace" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint schemaName="ping_bot" tableName="projects" columnNames="path,namespace"/>
+    </changeSet>
+
+    <changeSet id="create-table-merge_requests" author="vlad.bakshanskij">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="projects" schemaName="ping_bot"/>
+            <not>
+                <tableExists tableName="merge_requests" schemaName="ping_bot"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="merge_requests" schemaName="ping_bot">
+            <column name="id" type="bigint" remarks="ИД мра в gitlab">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="iid" type="bigint" remarks="внутренний ИД мра для проекта">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="message_id" type="bigint" remarks="сообщение, которое содержит МР">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="project_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="merge_requests__has_project_fk"
+                             referencedTableName="projects"
+                             referencedColumnNames="id"
+                             referencedTableSchemaName="ping_bot"/>
+            </column>
+
+            <column name="link" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_datetime" type="timestamp" defaultValue="now()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="wip" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_modify_datetime" type="timestamp"/>
+        </createTable>
+
+        <addUniqueConstraint schemaName="ping_bot" tableName="merge_requests" columnNames="iid,project_id"/>
+    </changeSet>
+
+    <changeSet id="create-table-reviewers" author="vlad.bakshanskij">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="reviewers" schemaName="ping_bot"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="reviewers" schemaName="ping_bot">
+            <column name="id" type="bigint" remarks="ИД ревьювера в телеграмме">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="nickname" type="varchar"
+                    remarks="Имя пользователя ревьювера в telegram. Используется для теггирования">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="personal_chat_id" type="bigint" remarks="чат для личных сообщений с ревьювером">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-merge_request_notifications" author="vlad.bakshanskij">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="reviewers" schemaName="ping_bot"/>
+            <tableExists tableName="merge_requests" schemaName="ping_bot"/>
+            <not>
+                <tableExists tableName="merge_request_notifications" schemaName="ping_bot"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="merge_request_notifications" schemaName="ping_bot">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="merge_request_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="merge_request_notifications__has__merge_request_fk"
+                             referencedTableName="merge_requests"
+                             referencedColumnNames="id"
+                             referencedTableSchemaName="ping_bot"/>
+            </column>
+
+            <column name="reviewer_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="merge_request_notifications__has_reviewer_fk"
+                             referencedTableName="reviewers"
+                             referencedColumnNames="id"
+                             referencedTableSchemaName="ping_bot"/>
+            </column>
+
+            <column name="chat_id" type="bigint" remarks="чат, где был отправлен МР">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
