@@ -1,0 +1,39 @@
+{
+  "update_id": 868553699,
+  "my_chat_member": {
+    "chat": {
+      "id": -835343898,
+      "title": "CHECK MR BOT",
+      "type": "group",
+      "all_members_are_administrators": true
+    },
+    "from": {
+      "id": 601907182,
+      "is_bot": false,
+      "first_name": "Vlad",
+      "last_name": "Bakshanskij",
+      "username": "vladBakshanskij",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "date": 1685737624,
+    "old_chat_member": {
+      "user": {
+        "id": 6020197542,
+        "is_bot": true,
+        "first_name": "ping_mr_bot",
+        "username": "pint_mr_bot"
+      },
+      "status": "member"
+    },
+    "new_chat_member": {
+      "user": {
+        "id": 6020197542,
+        "is_bot": true,
+        "first_name": "ping_mr_bot",
+        "username": "pint_mr_bot"
+      },
+      "status": "left"
+    }
+  }
+}

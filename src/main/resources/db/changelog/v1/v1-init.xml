@@ -24,16 +24,16 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="path" type="varchar(255)">
+            <column name="namespace" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="namespace" type="varchar(255)">
+            <column name="group" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <addUniqueConstraint schemaName="ping_bot" tableName="projects" columnNames="path,namespace"/>
+        <addUniqueConstraint schemaName="ping_bot" tableName="projects" columnNames="name,group,namespace"/>
     </changeSet>
 
     <changeSet id="create-table-merge_requests" author="vlad.bakshanskij">
@@ -82,6 +82,10 @@
             </column>
 
             <column name="last_modify_datetime" type="timestamp"/>
+
+            <column name="chat_id" type="bigint" remarks="чат, где был отправлен МР">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <addUniqueConstraint schemaName="ping_bot" tableName="merge_requests" columnNames="iid,project_id"/>
@@ -138,10 +142,6 @@
                              referencedTableName="reviewers"
                              referencedColumnNames="id"
                              referencedTableSchemaName="ping_bot"/>
-            </column>
-
-            <column name="chat_id" type="bigint" remarks="чат, где был отправлен МР">
-                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>

@@ -1,0 +1,80 @@
+{
+  "update_id": 868553743,
+  "message": {
+    "message_id": 60,
+    "from": {
+      "id": 601907182,
+      "is_bot": false,
+      "first_name": "Vlad",
+      "last_name": "Bakshanskij",
+      "username": "vladBakshanskij",
+      "language_code": "ru",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -835343898,
+      "title": "CHECK MR BOT",
+      "type": "group",
+      "all_members_are_administrators": true
+    },
+    "date": 1685792023,
+    "reply_to_message": {
+      "message_id": 48,
+      "from": {
+        "id": 601907182,
+        "is_bot": false,
+        "first_name": "Vlad",
+        "last_name": "Bakshanskij",
+        "username": "vladBakshanskij",
+        "language_code": "ru",
+        "is_premium": true
+      },
+      "chat": {
+        "id": -835343898,
+        "title": "CHECK MR BOT",
+        "type": "group",
+        "all_members_are_administrators": true
+      },
+      "date": 1685791807,
+      "text": "#mr #billing #mini #срочный \n\nhttps://git.russpass.dev/russpass/billing/russpass-billing/-/merge_requests/1255\n\nhttps://git.russpass.dev/russpass/platform/russpass-platform-content/-/merge_requests/226\n\nhttps://git.russpass.dev/russpass/platform/russpass-platform-content/-/merge_requests/116",
+      "entities": [
+        {
+          "offset": 0,
+          "length": 3,
+          "type": "hashtag"
+        },
+        {
+          "offset": 4,
+          "length": 8,
+          "type": "hashtag"
+        },
+        {
+          "offset": 13,
+          "length": 5,
+          "type": "hashtag"
+        },
+        {
+          "offset": 19,
+          "length": 8,
+          "type": "hashtag"
+        },
+        {
+          "offset": 30,
+          "length": 80,
+          "type": "url"
+        },
+        {
+          "offset": 112,
+          "length": 89,
+          "type": "url"
+        },
+        {
+          "offset": 203,
+          "length": 89,
+          "type": "url"
+        }
+      ]
+    },
+    "text": "123"
+  }
+}
