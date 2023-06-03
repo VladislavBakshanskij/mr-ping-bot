@@ -1,3 +1,4 @@
+import nu.studer.gradle.jooq.JooqGenerate
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.Logging
 
@@ -97,6 +98,10 @@ liquibase {
         )
     }
     runList = "main"
+}
+
+tasks.withType<JooqGenerate> {
+    dependsOn(":update")
 }
 
 tasks.withType<KotlinCompile> {
