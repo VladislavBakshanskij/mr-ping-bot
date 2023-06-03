@@ -18,7 +18,12 @@ data class ChatMemberUpdated(
 )
 
 data class ChatMember(
-    val status: String,
+    val status: ChatMemberStatus,
     val user: TelegramUser,
 )
+
+enum class ChatMemberStatus {
+    LEFT,
+    MEMBER
+}
 

@@ -9,4 +9,6 @@ import org.springframework.test.context.ActiveProfiles
 @AutoConfigureMockMvc
 @AutoConfigureWireMock(port = 0)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-abstract class AbstractIntegrationTest
+abstract class AbstractIntegrationTest {
+
+}
