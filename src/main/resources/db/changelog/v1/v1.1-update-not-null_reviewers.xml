@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="v1.1-drop-not-null_reviewers.nickname" author="vlad.bakshanskij">
+        <preConditions>
+            <tableExists schemaName="ping_bot" tableName="reviewers"/>
+            <columnExists schemaName="ping_bot" tableName="reviewers" columnName="nickname"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="reviewers" schemaName="ping_bot" columnName="nickname"/>
+    </changeSet>
+
+    <changeSet id="v1.1-drop-not-null_reviewers.personal_chat_id" author="vlad.bakshanskij">
+        <preConditions>
+            <tableExists schemaName="ping_bot" tableName="reviewers"/>
+            <columnExists schemaName="ping_bot" tableName="reviewers" columnName="personal_chat_id"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="reviewers" schemaName="ping_bot" columnName="personal_chat_id"/>
+    </changeSet>
+</databaseChangeLog>

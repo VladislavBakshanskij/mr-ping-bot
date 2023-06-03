@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="v1.2-create-table_messages" author="vlad.bakshanskij">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="messages" schemaName="ping_bot"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="messages" schemaName="ping_bot">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="chat_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="text" type="varchar"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="v1.2-add-foreign-key-on-message" author="vlad.bakshanskij">
+        <preConditions>
+            <tableExists tableName="merge_requests" schemaName="ping_bot"/>
+            <tableExists tableName="messages" schemaName="ping_bot"/>
+            <columnExists tableName="merge_requests" columnName="chat_id" schemaName="ping_bot"/>
+            <columnExists tableName="merge_requests" columnName="message_id" schemaName="ping_bot"/>
+        </preConditions>
+
+        <dropColumn tableName="merge_requests" schemaName="ping_bot" columnName="chat_id"/>
+
+        <addForeignKeyConstraint baseTableName="merge_requests"
+                                 baseColumnNames="message_id"
+                                 baseTableSchemaName="ping_bot"
+                                 constraintName="merge_requests__has_message_fk"
+                                 referencedTableName="messages"
+                                 referencedColumnNames="id"
+                                 referencedTableSchemaName="ping_bot"/>
+    </changeSet>
+</databaseChangeLog>

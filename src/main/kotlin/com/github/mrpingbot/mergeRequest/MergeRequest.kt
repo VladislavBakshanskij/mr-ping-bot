@@ -5,7 +5,6 @@ import java.time.Instant
 data class MergeRequest(
     val id: Long,
     val iid: Long,
-    val chatId: Long,
     val messageId: Long,
     val projectId: Long,
     val link: String,
@@ -19,7 +18,20 @@ data class MergeRequest(
     ): MergeRequest = MergeRequest(
         id,
         iid,
-        chatId,
+        messageId,
+        projectId,
+        link,
+        wip,
+        createDatetime,
+        status,
+        lastModifiedDatetime
+    )
+
+    fun updateMessageId(
+        messageId: Long
+    ): MergeRequest = MergeRequest(
+        id,
+        iid,
         messageId,
         projectId,
         link,

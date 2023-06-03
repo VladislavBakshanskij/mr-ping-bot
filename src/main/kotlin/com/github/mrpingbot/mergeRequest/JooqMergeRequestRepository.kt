@@ -17,7 +17,6 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
         MergeRequest(
             mergeRequestsRecord.id,
             mergeRequestsRecord.iid,
-            mergeRequestsRecord.chatId,
             mergeRequestsRecord.messageId,
             mergeRequestsRecord.projectId,
             mergeRequestsRecord.link,
@@ -32,7 +31,6 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
         dslContext.insertInto(MERGE_REQUESTS)
             .set(MERGE_REQUESTS.ID, mergeRequest.id)
             .set(MERGE_REQUESTS.IID, mergeRequest.iid)
-            .set(MERGE_REQUESTS.CHAT_ID, mergeRequest.chatId)
             .set(MERGE_REQUESTS.MESSAGE_ID, mergeRequest.messageId)
             .set(MERGE_REQUESTS.PROJECT_ID, mergeRequest.projectId)
             .set(MERGE_REQUESTS.LINK, mergeRequest.link)
@@ -68,6 +66,7 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
 
     override fun update(mergeRequest: MergeRequest) {
         dslContext.update(MERGE_REQUESTS)
+            .set(MERGE_REQUESTS.MESSAGE_ID, mergeRequest.messageId)
             .set(
                 MERGE_REQUESTS.LAST_MODIFY_DATETIME,
                 LocalDateTime.ofInstant(mergeRequest.lastModifiedDatetime, ZoneOffset.UTC)

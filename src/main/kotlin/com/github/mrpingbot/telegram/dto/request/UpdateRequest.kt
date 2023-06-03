@@ -1,34 +1,24 @@
 package com.github.mrpingbot.telegram.dto.request
 
+import com.github.mrpingbot.telegram.dto.common.TelegramChat
+import com.github.mrpingbot.telegram.dto.common.TelegramMessage
+import com.github.mrpingbot.telegram.dto.common.TelegramUser
+
 //https://core.telegram.org/bots/api#getting-updates
 data class UpdateRequest(
-    val message: Message?,
+    val message: TelegramMessage?,
     val myChatMember: ChatMemberUpdated?,
+    val editedMessage: TelegramMessage?,
 )
 
 data class ChatMemberUpdated(
-    val chat: Chat,
-    val from: User,
+    val chat: TelegramChat,
+    val from: TelegramUser,
     val newChatMember: ChatMember
 )
 
 data class ChatMember(
     val status: String,
-    val user: User,
+    val user: TelegramUser,
 )
 
-data class Message(
-    val messageId: Long,
-    val from: User,
-    val chat: Chat,
-    val text: String?,
-)
-
-data class User(
-    val id: Long,
-    val username: String?,
-)
-
-data class Chat(
-    val id: Long
-)

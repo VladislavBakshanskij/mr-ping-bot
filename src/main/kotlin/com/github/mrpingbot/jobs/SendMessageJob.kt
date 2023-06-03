@@ -1,6 +1,7 @@
 package com.github.mrpingbot.jobs
 
 import com.github.mrpingbot.mergeRequest.MergeRequestService
+import com.github.mrpingbot.message.MessageService
 import com.github.mrpingbot.rewiever.ReviewerService
 import com.github.mrpingbot.telegram.TelegramService
 import org.springframework.beans.factory.annotation.Value
@@ -16,9 +17,10 @@ import java.time.temporal.ChronoUnit
 )
 @Component
 class SendMessageJob(
-    private val mergeRequestService: MergeRequestService,
+    private val messageService: MessageService,
     private val reviewerService: ReviewerService,
     private val telegramService: TelegramService,
+    private val mergeRequestService: MergeRequestService,
     @Value("\${job.send-message.period-in-minutes}") private val periodInMinutes: Long,
 ) {
     @Scheduled(cron = "\${job.send-message.cron}")
@@ -32,12 +34,12 @@ class SendMessageJob(
                 val reviewers =
                     reviewerService.getReviewersByMergeRequestIds(mergeRequests.map { it.id })
                 // МРы в рамках одного сообщения имеют один и тот чат
-                val chatId = mergeRequests.map { it.chatId }.first()
+                val message = messageService.getById(messageId)
 
                 if (reviewers.isEmpty()) {
                     telegramService.replyMessage(
-                        chatId,
-                        messageId,
+                        message.chatId,
+                        message.id,
                         "ПОСМОТРИТЕ МР", // todo изменить текстовку
                     )
                 }

@@ -1,5 +1,6 @@
 package com.github.mrpingbot.telegram
 
+import com.github.mrpingbot.telegram.dto.common.TelegramMessage
 import com.github.mrpingbot.telegram.dto.request.SendMessageRequest
 import com.github.mrpingbot.vpn.VpnConnectorTemplate
 import org.springframework.stereotype.Service
@@ -12,13 +13,13 @@ class TelegramService(
     fun sendMessage(
         chatId: Long,
         message: String
-    ) = vpnConnectorTemplate.execute {
+    ): TelegramMessage = vpnConnectorTemplate.execute {
         telegramClient.sendMessage(
             SendMessageRequest(
                 chatId,
                 message
             )
-        )
+        ).result
     }
 
     fun replyMessage(
@@ -32,6 +33,6 @@ class TelegramService(
                 message,
                 messageId
             )
-        )
+        ).result
     }
 }

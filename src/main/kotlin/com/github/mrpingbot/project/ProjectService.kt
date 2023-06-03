@@ -10,4 +10,7 @@ class ProjectService(private val projectRepository: ProjectRepository) {
         val foundedProject = projectRepository.findById(project.id)
         return foundedProject ?: projectRepository.save(project)
     }
+
+    fun getById(projectId: Long): Project =
+        projectRepository.findById(projectId) ?: throw ProjectNotFoundException.ofId(projectId)
 }
