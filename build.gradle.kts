@@ -45,6 +45,7 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 }
 
 jooq {
