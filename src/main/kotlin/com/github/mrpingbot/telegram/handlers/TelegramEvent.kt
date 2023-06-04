@@ -5,5 +5,6 @@ enum class TelegramEvent {
     PERSONAL_MESSAGE,
     REACTION,
     EDIT_MESSAGE,
-    LEFT_FROM_GROUP
+    LEFT_FROM_GROUP,
+    COMMAND
 }

@@ -21,10 +21,18 @@ class TelegramUpdateFacade(
     private fun resolveEvent(request: UpdateRequest): TelegramEvent? {
         val message = request.message ?: return null
         return when (message.chat.type) {
-            ChatType.PRIVATE -> TelegramEvent.PERSONAL_MESSAGE
+            ChatType.PRIVATE -> {
+                if (message.text != null && message.text.startsWith("/")) {
+                    TelegramEvent.COMMAND
+                } else {
+                    TelegramEvent.PERSONAL_MESSAGE
+                }
+            }
+
             ChatType.GROUP -> {
+                var event = TelegramEvent.JOIN_TO_GROUP
                 if (request.myChatMember != null) {
-                    return if (request.myChatMember.newChatMember.status == ChatMemberStatus.MEMBER) {
+                    event = if (request.myChatMember.newChatMember.status == ChatMemberStatus.MEMBER) {
                         TelegramEvent.JOIN_TO_GROUP
                     } else {
                         TelegramEvent.LEFT_FROM_GROUP
@@ -32,7 +40,7 @@ class TelegramUpdateFacade(
                 }
 
                 // todo добавить логику определения реакции
-                return TelegramEvent.JOIN_TO_GROUP
+                return event
             }
 
             else -> null

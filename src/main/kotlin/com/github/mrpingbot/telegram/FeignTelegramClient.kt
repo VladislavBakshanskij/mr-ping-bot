@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
     name = "telegram-client",
     configuration = [FeignTelegramClient.Config::class]
 )
-interface FeignTelegramClient : TelegramClient {
+internal interface FeignTelegramClient : TelegramClient {
     class Config {
         @Bean
         fun loggerLevel(): Level = Level.FULL
