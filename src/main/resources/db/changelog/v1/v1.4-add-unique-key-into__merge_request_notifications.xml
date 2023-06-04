@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="v1.4-add-unique-key-into__merge_request_notifications" author="vlad.bakshanskij">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="merge_request_notifications" schemaName="ping_bot"/>
+            <columnExists tableName="merge_request_notifications" schemaName="ping_bot" columnName="merge_request_id"/>
+            <columnExists tableName="merge_request_notifications" schemaName="ping_bot" columnName="reviewer_id"/>
+            <columnExists tableName="merge_request_notifications" schemaName="ping_bot" columnName="id"/>
+            <not>
+                <primaryKeyExists schemaName="ping_bot"
+                                  tableName="merge_request_notifications"
+                                  primaryKeyName="merge_request_notifications__pk"/>
+            </not>
+        </preConditions>
+
+        <dropColumn tableName="merge_request_notifications" schemaName="ping_bot" columnName="id"/>
+        <addPrimaryKey tableName="merge_request_notifications"
+                       schemaName="ping_bot"
+                       columnNames="merge_request_id,reviewer_id"
+                       constraintName="merge_request_notifications__pk"/>
+    </changeSet>
+</databaseChangeLog>

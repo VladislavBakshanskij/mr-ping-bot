@@ -43,4 +43,16 @@ internal class JooqReviewerRepository(private val dslContext: DSLContext) : Revi
         .where(REVIEWERS.ID.equal(id))
         .fetchOne()
         ?.map(mapper)
+
+    override fun update(reviewer: Reviewer) {
+        dslContext.update(REVIEWERS)
+            .set(REVIEWERS.PERSONAL_CHAT_ID, reviewer.personalChatId)
+            .set(REVIEWERS.GITLAB_USERNAME, reviewer.gitlabUsername)
+            .execute()
+    }
+
+    override fun findByGitlabUsername(gitlabUsername: String): Reviewer? = dslContext.selectFrom(REVIEWERS)
+        .where(REVIEWERS.GITLAB_USERNAME.equal(gitlabUsername))
+        .fetchOne()
+        ?.map(mapper)
 }

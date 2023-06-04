@@ -43,6 +43,7 @@ class SendMessageJob(
                         "ПОСМОТРИТЕ МР", // todo изменить текстовку
                     )
                 }
+                // todo добавить возможность нотификации только ревьюверов по имени в ТГ
 
                 mergeRequests.map { it.updateLastModifiedDate(Instant.now()) }
                     .forEach { mergeRequestService.update(it) }

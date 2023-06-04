@@ -3,6 +3,7 @@ package com.github.mrpingbot.gitlab
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequest
+import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequestComment
 import com.github.mrpingbot.gitlab.dto.response.GitlabProject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -74,6 +75,27 @@ internal class SimpleGitlabClient(
         logger.debug("Request URL {} HEADERS {}", url, openConnection.requestProperties)
         val response: List<GitlabMergeRequest> =
             openConnection.inputStream.use { objectMapper.readValue<List<GitlabMergeRequest>>(it) }
+        logger.debug("RESPONSE FOR URL {} BODY {}", url, response)
+        openConnection.disconnect()
+        return response
+    }
+
+    override fun getMergeRequestComments(
+        projectId: String,
+        mergeRequestIid: Long
+    ): List<GitlabMergeRequestComment> {
+        val encodedProjectId = URLEncoder.encode(
+            projectId,
+            StandardCharsets.UTF_8
+        )
+
+        val openConnection =
+            URL("$url/projects/$encodedProjectId/merge_requests/$mergeRequestIid/notes").openConnection() as HttpURLConnection
+        openConnection.requestMethod = HttpMethod.GET.name()
+        openConnection.setRequestProperty("PRIVATE-TOKEN", token)
+        logger.debug("Request URL {} HEADERS {}", url, openConnection.requestProperties)
+        val response: List<GitlabMergeRequestComment> =
+            openConnection.inputStream.use { objectMapper.readValue<List<GitlabMergeRequestComment>>(it) }
         logger.debug("RESPONSE FOR URL {} BODY {}", url, response)
         openConnection.disconnect()
         return response

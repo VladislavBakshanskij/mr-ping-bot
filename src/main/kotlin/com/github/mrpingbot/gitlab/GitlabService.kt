@@ -1,6 +1,7 @@
 package com.github.mrpingbot.gitlab
 
 import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequest
+import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequestComment
 import com.github.mrpingbot.gitlab.dto.response.GitlabProject
 import com.github.mrpingbot.vpn.VpnConnectorTemplate
 import org.springframework.stereotype.Service
@@ -34,6 +35,18 @@ class GitlabService(
             buildProjectId(projectId),
             mergeRequestIids
         )
+    }
+
+    fun getMergeRequestsComments(
+        projectId: GitlabProjectId,
+        mergeRequestIid: Long,
+    ): List<GitlabMergeRequestComment> {
+        return vpnConnectorTemplate.execute {
+            gitlabClient.getMergeRequestComments(
+                buildProjectId(projectId),
+                mergeRequestIid
+            )
+        }
     }
 
     private fun buildProjectId(projectId: GitlabProjectId) =
