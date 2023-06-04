@@ -1,7 +1,6 @@
 package com.github.mrpingbot.telegram
 
 import com.github.mrpingbot.telegram.dto.common.ChatType
-import com.github.mrpingbot.telegram.dto.request.ChatMemberStatus
 import com.github.mrpingbot.telegram.dto.request.UpdateRequest
 import com.github.mrpingbot.telegram.handlers.TelegramEvent
 import com.github.mrpingbot.telegram.handlers.TelegramEventHandler
@@ -29,20 +28,8 @@ class TelegramUpdateFacade(
                 }
             }
 
-            ChatType.GROUP -> {
-                var event = TelegramEvent.JOIN_TO_GROUP
-                if (request.myChatMember != null) {
-                    event = if (request.myChatMember.newChatMember.status == ChatMemberStatus.MEMBER) {
-                        TelegramEvent.JOIN_TO_GROUP
-                    } else {
-                        TelegramEvent.LEFT_FROM_GROUP
-                    }
-                }
-
-                // todo добавить логику определения реакции
-                return event
-            }
-
+            // todo добавить проверки на реакици после реализации https://github.com/tdlib/telegram-bot-api/issues/260
+            ChatType.GROUP -> TelegramEvent.GROUP_MESSAGE
             else -> null
         }
     }

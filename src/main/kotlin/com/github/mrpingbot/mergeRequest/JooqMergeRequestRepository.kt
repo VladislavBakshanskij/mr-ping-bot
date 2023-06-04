@@ -75,4 +75,11 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
             .execute()
     }
 
+    override fun findAllByStatuses(
+        statuses: List<String>
+    ): List<MergeRequest> = dslContext.selectFrom(MERGE_REQUESTS)
+        .where(MERGE_REQUESTS.STATUS.`in`(statuses))
+        .fetch()
+        .map(mapper)
+        .toList()
 }

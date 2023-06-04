@@ -1,12 +1,9 @@
-package com.github.mrpingbot.project
+package com.github.mrpingbot.gitlab
 
-import com.github.mrpingbot.gitlab.GitlabProjectId
-
-data class Project(
-    val id: Long,
-    val name: String,
-    val group: String,
+data class SimpleGitlabProjectId(
     val namespace: String,
+    val group: String,
+    val name: String,
 ) : GitlabProjectId {
     override fun namespace(): String = namespace
 

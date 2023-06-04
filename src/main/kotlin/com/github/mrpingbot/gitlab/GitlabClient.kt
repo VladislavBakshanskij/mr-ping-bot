@@ -4,7 +4,9 @@ import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequest
 import com.github.mrpingbot.gitlab.dto.response.GitlabProject
 
 interface GitlabClient {
-    fun getMergeRequest(projectNameWithNamespace: String, mergeRequestIid: Long): GitlabMergeRequest
+    fun getMergeRequest(projectId: String, mergeRequestIid: Long): GitlabMergeRequest
 
-    fun getProject(projectNameWithNamespace: String): GitlabProject
+    fun getProject(projectId: String): GitlabProject
+
+    fun getMergeRequests(projectId: String, iids: List<Long>): List<GitlabMergeRequest>
 }

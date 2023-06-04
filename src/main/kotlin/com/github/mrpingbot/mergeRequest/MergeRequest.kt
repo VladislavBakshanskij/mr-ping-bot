@@ -38,6 +38,20 @@ data class MergeRequest(
         wip,
         createDatetime,
         status,
-        lastModifiedDatetime
+        Instant.now()
+    )
+
+    fun updateStatus(
+        status: String
+    ): MergeRequest = MergeRequest(
+        id,
+        iid,
+        messageId,
+        projectId,
+        link,
+        wip,
+        createDatetime,
+        status,
+        Instant.now()
     )
 }

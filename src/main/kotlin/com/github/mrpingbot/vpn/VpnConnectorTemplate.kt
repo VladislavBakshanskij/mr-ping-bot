@@ -6,7 +6,7 @@ interface VpnConnectorTemplate : VpnConnector {
         try {
             return action()
         } catch (e: Exception) {
-            throw e;
+            throw e
         } finally {
             close()
         }

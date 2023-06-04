@@ -10,4 +10,6 @@ interface MergeRequestRepository {
     fun findAllByLastModifiedDateLessThan(date: Instant): List<MergeRequest>
 
     fun update(mergeRequest: MergeRequest)
+
+    fun findAllByStatuses(statuses: List<String>): List<MergeRequest>
 }

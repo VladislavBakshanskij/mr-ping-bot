@@ -16,4 +16,8 @@ class MergeRequestService(private val mergeRequestRepository: MergeRequestReposi
     fun update(
         mergeRequest: MergeRequest
     ) = mergeRequestRepository.update(mergeRequest)
+
+    fun getAllByStatuses(
+        statuses: List<String>
+    ): List<MergeRequest> = mergeRequestRepository.findAllByStatuses(statuses)
 }

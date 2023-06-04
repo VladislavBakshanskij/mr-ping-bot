@@ -1,6 +1,7 @@
 package com.github.mrpingbot.gitlab
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequest
 import com.github.mrpingbot.gitlab.dto.response.GitlabProject
 import org.springframework.beans.factory.annotation.Value
@@ -17,32 +18,53 @@ internal class SimpleGitlabClient(
     @Value("\${gitlab.token}") private val token: String,
     private val objectMapper: ObjectMapper
 ) : GitlabClient {
-    override fun getMergeRequest(projectNameWithNamespace: String, mergeRequestIid: Long): GitlabMergeRequest {
-        val encodedProjectName = URLEncoder.encode(
-            projectNameWithNamespace,
+    companion object {
+        private const val QUERY_SEPARATOR = "&"
+    }
+
+    override fun getMergeRequest(projectId: String, mergeRequestIid: Long): GitlabMergeRequest {
+        val encodedProjectId = URLEncoder.encode(
+            projectId,
             StandardCharsets.UTF_8
         )
 
         val openConnection =
-            URL("$url/projects/$encodedProjectName/merge_requests/$mergeRequestIid").openConnection() as HttpURLConnection
+            URL("$url/projects/$encodedProjectId/merge_requests/$mergeRequestIid").openConnection() as HttpURLConnection
         openConnection.requestMethod = HttpMethod.GET.name()
         openConnection.setRequestProperty("PRIVATE-TOKEN", token)
-        val response = openConnection.inputStream.use { objectMapper.readValue(it, GitlabMergeRequest::class.java) }
+        val response = openConnection.inputStream.use { objectMapper.readValue<GitlabMergeRequest>(it) }
         openConnection.disconnect()
         return response
     }
 
-    override fun getProject(projectNameWithNamespace: String): GitlabProject {
-        val encodedProjectName = URLEncoder.encode(
-            projectNameWithNamespace,
+    override fun getProject(projectId: String): GitlabProject {
+        val encodedProjectId = URLEncoder.encode(
+            projectId,
             StandardCharsets.UTF_8
         )
 
         val openConnection =
-            URL("$url/projects/$encodedProjectName").openConnection() as HttpURLConnection
+            URL("$url/projects/$encodedProjectId").openConnection() as HttpURLConnection
         openConnection.requestMethod = HttpMethod.GET.name()
         openConnection.setRequestProperty("PRIVATE-TOKEN", token)
-        val response = openConnection.inputStream.use { objectMapper.readValue(it, GitlabProject::class.java) }
+        val response = openConnection.inputStream.use { objectMapper.readValue<GitlabProject>(it) }
+        openConnection.disconnect()
+        return response
+    }
+
+    override fun getMergeRequests(projectId: String, iids: List<Long>): List<GitlabMergeRequest> {
+        val encodedProjectId = URLEncoder.encode(
+            projectId,
+            StandardCharsets.UTF_8
+        )
+
+        val query = iids.joinToString(QUERY_SEPARATOR) { "iids[]=$it" }
+        val openConnection =
+            URL("$url/projects/$encodedProjectId/merge_requests?$query").openConnection() as HttpURLConnection
+        openConnection.requestMethod = HttpMethod.GET.name()
+        openConnection.setRequestProperty("PRIVATE-TOKEN", token)
+        val response: List<GitlabMergeRequest> =
+            openConnection.inputStream.use { objectMapper.readValue<List<GitlabMergeRequest>>(it) }
         openConnection.disconnect()
         return response
     }
