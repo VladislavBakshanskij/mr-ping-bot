@@ -16,7 +16,7 @@ enum class GitlabMergeRequestCommentType(val gitlabName: String) {
 
     companion object {
         @JsonCreator
-        fun fromGitlabName(gitlabName: String): GitlabMergeRequestCommentType? =
+        fun fromGitlabName(gitlabName: String?): GitlabMergeRequestCommentType? =
             values().find { it.gitlabName == gitlabName }
     }
 }
