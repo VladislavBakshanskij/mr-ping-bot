@@ -11,6 +11,7 @@ import com.github.mrpingbot.project.Project
 import com.github.mrpingbot.project.ProjectService
 import com.github.mrpingbot.rewiever.Reviewer
 import com.github.mrpingbot.rewiever.ReviewerService
+import com.github.mrpingbot.telegram.dto.common.TelegramMessage
 import com.github.mrpingbot.telegram.dto.request.UpdateRequest
 import java.time.Instant
 
@@ -20,7 +21,6 @@ abstract class AbstractTelegramEventHandler(
     private val projectService: ProjectService,
     private val reviewerService: ReviewerService,
     private val mergeRequestService: MergeRequestService,
-    private val chatId: Long,
 ) : TelegramEventHandler {
     internal fun createMergeRequests(
         request: UpdateRequest
@@ -47,11 +47,12 @@ abstract class AbstractTelegramEventHandler(
                 )
             )
 
+            val telegramMessage: TelegramMessage = request.message!!
             val message: Message = messageService.createIfNotExists(
                 Message(
-                    request.message!!.messageId,
-                    chatId,
-                    request.message.text
+                    telegramMessage.messageId,
+                    telegramMessage.chat.id,
+                    telegramMessage.text
                 )
             )
 
@@ -59,8 +60,8 @@ abstract class AbstractTelegramEventHandler(
             // сохраним, чтобы потом можно было легко вести поиск
             reviewerService.createIfNotExists(
                 Reviewer(
-                    request.message.from!!.id,
-                    request.message.from.username,
+                    telegramMessage.from!!.id,
+                    telegramMessage.from.username,
                 )
             )
 

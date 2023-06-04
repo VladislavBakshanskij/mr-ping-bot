@@ -6,9 +6,7 @@ import com.github.mrpingbot.message.MessageService
 import com.github.mrpingbot.project.ProjectService
 import com.github.mrpingbot.rewiever.ReviewerService
 import com.github.mrpingbot.telegram.dto.request.UpdateRequest
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class GroupMessageTelegramEventHandler(
@@ -17,14 +15,12 @@ class GroupMessageTelegramEventHandler(
     projectService: ProjectService,
     reviewerService: ReviewerService,
     mergeRequestService: MergeRequestService,
-    @Value("\${telegram.code-review-chat-id:-835343898}") private val chatId: Long,
 ) : AbstractTelegramEventHandler(
     gitlabService,
     messageService,
     projectService,
     reviewerService,
-    mergeRequestService,
-    chatId
+    mergeRequestService
 ), TelegramEventHandler {
     override fun supportEvent(): TelegramEvent = TelegramEvent.GROUP_MESSAGE
 

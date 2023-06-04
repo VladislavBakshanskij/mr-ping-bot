@@ -28,8 +28,7 @@ class PersonalMessageTelegramEventHandler(
     messageService,
     projectService,
     reviewerService,
-    mergeRequestService,
-    chatId
+    mergeRequestService
 ), TelegramEventHandler {
 
     companion object {
