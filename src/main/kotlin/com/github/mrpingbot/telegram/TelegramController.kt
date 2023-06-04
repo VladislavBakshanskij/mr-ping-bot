@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("telegram")
 class TelegramController(
-    private val telegramUpdateFacade: TelegramUpdateFacade,
+    private val telegramUpdateAsyncFacade: TelegramUpdateAsyncFacade,
     private val objectMapper: ObjectMapper,
 ) {
     @PostMapping("update")
     fun handleUpdate(@RequestBody request: UpdateRequest) {
 //        println(objectMapper.writeValueAsString(request))
-        telegramUpdateFacade.handleUpdate(request)
+        telegramUpdateAsyncFacade.handleUpdate(request)
     }
 }

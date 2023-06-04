@@ -1,7 +1,6 @@
 package com.github.mrpingbot.gitlab
 
 import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequest
-import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequestComment
 import com.github.mrpingbot.gitlab.dto.response.GitlabProject
 import com.github.mrpingbot.vpn.VpnConnectorTemplate
 import org.springframework.stereotype.Service

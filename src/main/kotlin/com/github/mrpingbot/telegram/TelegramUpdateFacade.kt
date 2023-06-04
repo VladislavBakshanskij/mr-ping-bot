@@ -4,6 +4,7 @@ import com.github.mrpingbot.telegram.dto.common.ChatType
 import com.github.mrpingbot.telegram.dto.request.UpdateRequest
 import com.github.mrpingbot.telegram.handlers.TelegramEvent
 import com.github.mrpingbot.telegram.handlers.TelegramEventHandler
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 class TelegramUpdateFacade(
     private val telegramEventHandlers: List<TelegramEventHandler>
 ) {
+    @Async
     @Transactional
     fun handleUpdate(request: UpdateRequest) {
         val event: TelegramEvent? = resolveEvent(request)

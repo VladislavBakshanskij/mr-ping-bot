@@ -11,18 +11,16 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnProperty(
-    value = [
-        "jobs.enabled",
-        "jobs.check-merge-request.enabled"
-    ]
+    value = ["job.enabled", "job.check-merge-request.enabled"],
+    matchIfMissing = true
 )
 class CheckMergeRequestsJob(
     private val gitlabService: GitlabService,
     private val projectService: ProjectService,
     private val mergeRequestService: MergeRequestService,
-    @Value("\${jobs.check-merge-request.statuses}") private val statuses: List<String>
+    @Value("\${job.check-merge-request.statuses}") private val statuses: List<String>
 ) {
-    @Scheduled(cron = "\${jobs.check-merge-request.cron}")
+    @Scheduled(cron = "\${job.check-merge-request.cron}")
     fun checkMergeRequestStatus() {
         val mergeRequests: List<MergeRequest> = mergeRequestService.getAllByStatuses(statuses)
 

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequest
 import com.github.mrpingbot.gitlab.dto.response.GitlabProject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
@@ -20,6 +22,7 @@ internal class SimpleGitlabClient(
 ) : GitlabClient {
     companion object {
         private const val QUERY_SEPARATOR = "&"
+        private val logger: Logger = LoggerFactory.getLogger(SimpleGitlabClient::class.java)
     }
 
     override fun getMergeRequest(projectId: String, mergeRequestIid: Long): GitlabMergeRequest {
@@ -28,11 +31,14 @@ internal class SimpleGitlabClient(
             StandardCharsets.UTF_8
         )
 
-        val openConnection =
-            URL("$url/projects/$encodedProjectId/merge_requests/$mergeRequestIid").openConnection() as HttpURLConnection
+        val url = "$url/projects/$encodedProjectId/merge_requests/$mergeRequestIid"
+        val openConnection = URL(url).openConnection() as HttpURLConnection
         openConnection.requestMethod = HttpMethod.GET.name()
         openConnection.setRequestProperty("PRIVATE-TOKEN", token)
+
+        logger.debug("Request URL {} HEADERS {}", url, openConnection.requestProperties)
         val response = openConnection.inputStream.use { objectMapper.readValue<GitlabMergeRequest>(it) }
+        logger.debug("RESPONSE FOR URL {} BODY {}", url, response)
         openConnection.disconnect()
         return response
     }
@@ -47,7 +53,9 @@ internal class SimpleGitlabClient(
             URL("$url/projects/$encodedProjectId").openConnection() as HttpURLConnection
         openConnection.requestMethod = HttpMethod.GET.name()
         openConnection.setRequestProperty("PRIVATE-TOKEN", token)
+        logger.debug("Request URL {} HEADERS {}", url, openConnection.requestProperties)
         val response = openConnection.inputStream.use { objectMapper.readValue<GitlabProject>(it) }
+        logger.debug("RESPONSE FOR URL {} BODY {}", url, response)
         openConnection.disconnect()
         return response
     }
@@ -63,8 +71,10 @@ internal class SimpleGitlabClient(
             URL("$url/projects/$encodedProjectId/merge_requests?$query").openConnection() as HttpURLConnection
         openConnection.requestMethod = HttpMethod.GET.name()
         openConnection.setRequestProperty("PRIVATE-TOKEN", token)
+        logger.debug("Request URL {} HEADERS {}", url, openConnection.requestProperties)
         val response: List<GitlabMergeRequest> =
             openConnection.inputStream.use { objectMapper.readValue<List<GitlabMergeRequest>>(it) }
+        logger.debug("RESPONSE FOR URL {} BODY {}", url, response)
         openConnection.disconnect()
         return response
     }

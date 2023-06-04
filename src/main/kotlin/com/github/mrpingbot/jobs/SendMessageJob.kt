@@ -46,6 +46,7 @@ class SendMessageJob(
 
                 mergeRequests.map { it.updateLastModifiedDate(Instant.now()) }
                     .forEach { mergeRequestService.update(it) }
+                // todo добавить удаление сообщений, которые были отправлены для просмотра МР, чтобы не заспамить чат старым МРом
             }
     }
 }
