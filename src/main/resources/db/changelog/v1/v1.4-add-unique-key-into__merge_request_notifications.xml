@@ -10,11 +10,6 @@
             <columnExists tableName="merge_request_notifications" schemaName="ping_bot" columnName="merge_request_id"/>
             <columnExists tableName="merge_request_notifications" schemaName="ping_bot" columnName="reviewer_id"/>
             <columnExists tableName="merge_request_notifications" schemaName="ping_bot" columnName="id"/>
-            <not>
-                <primaryKeyExists schemaName="ping_bot"
-                                  tableName="merge_request_notifications"
-                                  primaryKeyName="merge_request_notifications__pk"/>
-            </not>
         </preConditions>
 
         <dropColumn tableName="merge_request_notifications" schemaName="ping_bot" columnName="id"/>
