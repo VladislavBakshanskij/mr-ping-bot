@@ -1,9 +1,11 @@
 package com.github.mrpingbot.jobs
 
 import com.github.mrpingbot.mergeRequest.MergeRequestService
+import com.github.mrpingbot.message.Message
 import com.github.mrpingbot.message.MessageService
 import com.github.mrpingbot.rewiever.ReviewerService
 import com.github.mrpingbot.telegram.TelegramService
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
@@ -29,25 +31,40 @@ class SendMessageJob(
         val mergeRequests =
             mergeRequestService.getAllByLastModifiedDateLessThan(dateToSearch)
 
+        val messagesWithoutMergeRequests = messageService.getAllWithoutMergeRequests()
+        messagesWithoutMergeRequests.forEach { telegramService.deleteMessage(it.id, it.chatId) }
+        messageService.deleteAll(messagesWithoutMergeRequests)
+
         mergeRequests.groupBy { it.messageId }
             .forEach { (messageId, mergeRequests) ->
                 val reviewers =
                     reviewerService.getReviewersByMergeRequestIds(mergeRequests.map { it.id })
+                        .filter { it.nickname != null }
                 // МРы в рамках одного сообщения имеют один и тот чат
                 val message = messageService.getById(messageId)
 
-                if (reviewers.isEmpty()) {
-                    telegramService.replyMessage(
-                        message.chatId,
-                        message.id,
-                        "ПОСМОТРИТЕ МР", // todo изменить текстовку
-                    )
+                val telegramMessage = if (reviewers.isEmpty()) {
+                    "ПОСМОТРИТЕ МР" // todo изменить текстовку
+                } else {
+                    reviewers.mapNotNull { it.nickname }
+                        .joinToString(StringUtils.SPACE, "Просьба посмотреть МР\n\n") { "@$it" }
                 }
-                // todo добавить возможность нотификации только ревьюверов по имени в ТГ
+
+                val replyMessageResponse = telegramService.replyMessage(
+                    message.chatId,
+                    message.id,
+                    telegramMessage
+                )
 
                 mergeRequests.map { it.updateLastModifiedDate(Instant.now()) }
                     .forEach { mergeRequestService.update(it) }
-                // todo добавить удаление сообщений, которые были отправлены для просмотра МР, чтобы не заспамить чат старым МРом
+
+                messageService.createIfNotExists(
+                    Message(
+                        replyMessageResponse.messageId,
+                        replyMessageResponse.chat.id,
+                    )
+                )
             }
     }
 }

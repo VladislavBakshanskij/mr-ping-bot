@@ -1,5 +1,6 @@
 package com.github.mrpingbot.telegram
 
+import com.github.mrpingbot.telegram.dto.request.DeleteMessageRequest
 import com.github.mrpingbot.telegram.dto.request.SendMessageRequest
 import com.github.mrpingbot.telegram.dto.response.SendMessageResponse
 import feign.Logger.*
@@ -21,4 +22,7 @@ internal interface FeignTelegramClient : TelegramClient {
 
     @PostMapping("sendMessage")
     override fun sendMessage(@RequestBody request: SendMessageRequest): SendMessageResponse
+
+    @PostMapping("deleteMessage")
+    override fun deleteMessage(@RequestBody request: DeleteMessageRequest)
 }

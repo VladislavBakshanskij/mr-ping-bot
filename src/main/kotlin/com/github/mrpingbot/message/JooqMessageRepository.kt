@@ -1,14 +1,24 @@
 package com.github.mrpingbot.message
 
-import com.github.jooq.tables.records.MessagesRecord
+import com.github.jooq.tables.references.MERGE_REQUESTS
 import com.github.jooq.tables.references.MESSAGES
 import org.jooq.DSLContext
+import org.jooq.Record
+import org.jooq.RecordMapper
 import org.springframework.stereotype.Repository
 
 @Repository
-class JooqMessageRepository(
+internal class JooqMessageRepository(
     private val dslContext: DSLContext
 ) : MessageRepository {
+    private val mapper: RecordMapper<Record, Message> = RecordMapper {
+        Message(
+            it.get(MESSAGES.ID)!!,
+            it.get(MESSAGES.CHAT_ID)!!,
+            it.get(MESSAGES.TEXT)
+        )
+    }
+
     override fun save(message: Message): Message {
         dslContext.insertInto(MESSAGES)
             .set(MESSAGES.ID, message.id)
@@ -22,12 +32,17 @@ class JooqMessageRepository(
     override fun findById(id: Long): Message? = dslContext.selectFrom(MESSAGES)
         .where(MESSAGES.ID.equal(id))
         .fetchOne()
-        ?.map {
-            val messagesRecord = it as MessagesRecord
-            Message(
-                messagesRecord.id,
-                messagesRecord.chatId,
-                messagesRecord.text
-            )
-        }
+        ?.map(mapper)
+
+    override fun findAllWithoutMergeRequests(): List<Message> = dslContext.select()
+        .from(MESSAGES)
+        .leftAntiJoin(MERGE_REQUESTS).on(MERGE_REQUESTS.MESSAGE_ID.equal(MESSAGES.ID))
+        .fetch()
+        .map(mapper)
+
+    override fun deleteAll(messages: List<Message>) {
+        dslContext.deleteFrom(MESSAGES)
+            .where(MESSAGES.ID.`in`(messages.map { it.id }))
+            .execute()
+    }
 }

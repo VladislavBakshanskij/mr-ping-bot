@@ -13,4 +13,8 @@ class MessageService(
 
     fun getById(messageId: Long): Message =
         messageRepository.findById(messageId) ?: throw MessageNotFoundException.ofId(messageId)
+
+    fun getAllWithoutMergeRequests(): List<Message> = messageRepository.findAllWithoutMergeRequests()
+
+    fun deleteAll(messages: List<Message>) = messageRepository.deleteAll(messages)
 }

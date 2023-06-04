@@ -1,6 +1,7 @@
 package com.github.mrpingbot.telegram
 
 import com.github.mrpingbot.telegram.dto.common.TelegramMessage
+import com.github.mrpingbot.telegram.dto.request.DeleteMessageRequest
 import com.github.mrpingbot.telegram.dto.request.SendMessageRequest
 import org.springframework.stereotype.Service
 
@@ -29,5 +30,14 @@ class TelegramService(
             messageId
         )
     ).result
+
+    fun deleteMessage(
+        id: Long,
+        chatId: Long
+    ) = telegramClient.deleteMessage(
+        DeleteMessageRequest(
+            id, chatId
+        )
+    )
 
 }
