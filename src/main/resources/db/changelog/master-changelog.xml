@@ -9,4 +9,5 @@
     <include file="v1/v1.2-add-tables.xml" relativeToChangelogFile="true"/>
     <include file="v1/v1.3-add-gitlab_username-into_reviewers.xml" relativeToChangelogFile="true"/>
     <include file="v1/v1.4-add-unique-key-into__merge_request_notifications.xml" relativeToChangelogFile="true"/>
+    <include file="v1/v1.5-add-approves-into__merge_request_notifications.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

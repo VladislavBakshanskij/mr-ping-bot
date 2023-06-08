@@ -1,6 +1,7 @@
 package com.github.mrpingbot.mergeRequestNotifications
 
-data class MergeRequestNotifications (
+data class MergeRequestNotifications(
     val mergeRequestId: Long,
-    val reviewerId: Long
+    val reviewerId: Long,
+    val approve: Boolean = true
 )

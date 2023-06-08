@@ -13,4 +13,6 @@ class ProjectService(private val projectRepository: ProjectRepository) {
 
     fun getById(projectId: Long): Project =
         projectRepository.findById(projectId) ?: throw ProjectNotFoundException.ofId(projectId)
+
+    fun getAll(): List<Project> = projectRepository.findAll()
 }

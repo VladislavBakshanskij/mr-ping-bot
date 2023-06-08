@@ -1,10 +1,9 @@
 package com.github.mrpingbot.mergeRequest
 
-import com.github.jooq.tables.records.MergeRequestsRecord
 import com.github.jooq.tables.references.MERGE_REQUESTS
+import com.github.jooq.tables.references.MERGE_REQUEST_NOTIFICATIONS
 import org.jooq.DSLContext
 import org.jooq.Record
-import org.jooq.RecordMapper
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.time.LocalDateTime
@@ -12,18 +11,17 @@ import java.time.ZoneOffset
 
 @Repository
 internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : MergeRequestRepository {
-    private val mapper: RecordMapper<Record, MergeRequest> = RecordMapper {
-        val mergeRequestsRecord = it as MergeRequestsRecord
+    private val mapper: (Record) -> MergeRequest = {
         MergeRequest(
-            mergeRequestsRecord.id,
-            mergeRequestsRecord.iid,
-            mergeRequestsRecord.messageId,
-            mergeRequestsRecord.projectId,
-            mergeRequestsRecord.link,
-            mergeRequestsRecord.wip!!,
-            mergeRequestsRecord.createDatetime?.toInstant(ZoneOffset.UTC),
-            mergeRequestsRecord.status,
-            mergeRequestsRecord.lastModifyDatetime?.toInstant(ZoneOffset.UTC),
+            it.get(MERGE_REQUESTS.ID)!!,
+            it.get(MERGE_REQUESTS.IID)!!,
+            it.get(MERGE_REQUESTS.MESSAGE_ID)!!,
+            it.get(MERGE_REQUESTS.PROJECT_ID)!!,
+            it.get(MERGE_REQUESTS.LINK)!!,
+            it.get(MERGE_REQUESTS.WIP)!!,
+            it.get(MERGE_REQUESTS.CREATE_DATETIME)?.toInstant(ZoneOffset.UTC),
+            it.get(MERGE_REQUESTS.STATUS)!!,
+            it.get(MERGE_REQUESTS.LAST_MODIFY_DATETIME)?.toInstant(ZoneOffset.UTC),
         )
     }
 
@@ -53,16 +51,27 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
         .fetchOne()
         ?.map(mapper)
 
-    override fun findAllByLastModifiedDateLessThan(date: Instant): List<MergeRequest> =
-        dslContext.selectFrom(MERGE_REQUESTS)
+    override fun findByApproveAndLastModifiedDateLessThan(approve: Boolean, date: Instant): List<MergeRequest> {
+        val approveCondition = MERGE_REQUEST_NOTIFICATIONS.APPROVE.equal(approve)
+        return dslContext.selectDistinct()
+            .from(MERGE_REQUESTS)
+            .leftJoin(MERGE_REQUEST_NOTIFICATIONS)
+            .on(MERGE_REQUEST_NOTIFICATIONS.MERGE_REQUEST_ID.equal(MERGE_REQUESTS.ID))
             .where(
                 MERGE_REQUESTS.LAST_MODIFY_DATETIME.lessOrEqual(
                     date.atZone(ZoneOffset.systemDefault()).toLocalDateTime()
                 )
+            ).and(
+                if (approve) {
+                    MERGE_REQUEST_NOTIFICATIONS.MERGE_REQUEST_ID.isNull.or(approveCondition)
+                } else {
+                    approveCondition
+                }
             )
             .fetch()
             .map(mapper)
             .toList()
+    }
 
     override fun update(mergeRequest: MergeRequest) {
         dslContext.update(MERGE_REQUESTS)

@@ -5,12 +5,11 @@ import com.github.jooq.tables.references.MERGE_REQUEST_NOTIFICATIONS
 import com.github.jooq.tables.references.REVIEWERS
 import org.jooq.DSLContext
 import org.jooq.Record
-import org.jooq.RecordMapper
 import org.springframework.stereotype.Repository
 
 @Repository
 internal class JooqReviewerRepository(private val dslContext: DSLContext) : ReviewerRepository {
-    private val mapper: RecordMapper<Record, Reviewer> = RecordMapper {
+    private val mapper: (Record) -> Reviewer = {
         Reviewer(
             it.get(REVIEWERS.ID)!!,
             it.get(REVIEWERS.NICKNAME)!!,
@@ -55,4 +54,10 @@ internal class JooqReviewerRepository(private val dslContext: DSLContext) : Revi
         .where(REVIEWERS.GITLAB_USERNAME.equal(gitlabUsername))
         .fetchOne()
         ?.map(mapper)
+
+    override fun findAllNames(): List<String> = dslContext.selectDistinct(REVIEWERS.NICKNAME)
+        .from(REVIEWERS)
+        .fetch()
+        .map { it.get(REVIEWERS.NICKNAME) }
+        .toList()
 }

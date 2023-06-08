@@ -21,4 +21,6 @@ class ReviewerService(private val reviewerRepository: ReviewerRepository) {
 
     fun existsByGitlabUsername(gitlabUsername: String): Boolean =
         findByGitlabUsername(gitlabUsername) != null
+
+    fun getAllNames(): List<String> = reviewerRepository.findAllNames()
 }

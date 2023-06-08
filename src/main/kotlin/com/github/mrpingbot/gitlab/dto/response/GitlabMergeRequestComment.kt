@@ -1,22 +1,24 @@
 package com.github.mrpingbot.gitlab.dto.response
 
-import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class GitlabMergeRequestComment(
     val type: GitlabMergeRequestCommentType?,
     val system: Boolean = false,
-    val author: GitlabAuthor,
+    val author: GitlabUser,
     val resolvable: Boolean = false,
     val resolved: Boolean = false,
 )
 
-enum class GitlabMergeRequestCommentType(val gitlabName: String) {
-    DIFF_NOTE("DiffNote"),
+enum class GitlabMergeRequestCommentType {
+    @field:JsonProperty("DiffNote")
+    DIFF_NOTE,
     ;
 
-    companion object {
-        @JsonCreator
-        fun fromGitlabName(gitlabName: String?): GitlabMergeRequestCommentType? =
-            values().find { it.gitlabName == gitlabName }
-    }
+//    companion object {
+//        @JsonCreator
+//        @JvmStatic
+//        fun fromGitlabName(gitlabName: String?): GitlabMergeRequestCommentType? =
+//            values().find { it.gitlabName == gitlabName }
+//    }
 }

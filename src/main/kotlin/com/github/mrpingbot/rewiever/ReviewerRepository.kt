@@ -10,4 +10,6 @@ interface ReviewerRepository {
     fun update(reviewer: Reviewer)
 
     fun findByGitlabUsername(gitlabUsername: String): Reviewer?
+
+    fun findAllNames(): List<String>
 }

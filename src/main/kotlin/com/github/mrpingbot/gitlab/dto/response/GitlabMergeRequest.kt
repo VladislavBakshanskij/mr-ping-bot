@@ -10,5 +10,7 @@ data class GitlabMergeRequest(
     val draft: Boolean,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val webUrl: String,
+    val author: GitlabUser,
     @field:JsonProperty("state") val status: String
 )

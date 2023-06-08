@@ -10,7 +10,6 @@ import com.github.mrpingbot.telegram.TelegramService
 import com.github.mrpingbot.telegram.dto.request.UpdateRequest
 import com.github.mrpingbot.utils.replaceAllNotLetter
 import org.apache.commons.lang3.StringUtils
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -21,7 +20,6 @@ class PersonalMessageTelegramEventHandler(
     private val projectService: ProjectService,
     reviewerService: ReviewerService,
     private val mergeRequestService: MergeRequestService,
-    @Value("\${telegram.code-review-chat-id:-835343898}") private val chatId: Long,
     private val telegramService: TelegramService,
 ) : AbstractTelegramEventHandler(
     gitlabService,
@@ -53,14 +51,13 @@ class PersonalMessageTelegramEventHandler(
             )
         }
 
-        val sendMessageResult = telegramService.sendMessage(
-            chatId,
+        val sendMessageResult = telegramService.sendToCodeReviewChat(
             stringJoiner.toString()
         )
         val savedMessage = messageService.createIfNotExists(
             Message(
                 sendMessageResult.messageId,
-                chatId,
+                sendMessageResult.chat.id,
                 sendMessageResult.text,
             )
         )

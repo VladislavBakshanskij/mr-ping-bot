@@ -26,10 +26,10 @@ class SendMessageJob(
     @Value("\${job.send-message.period-in-minutes}") private val periodInMinutes: Long,
 ) {
     @Scheduled(cron = "\${job.send-message.cron}")
-    fun handleOldMergeRequests() {
+    fun replyNotifications() {
         val dateToSearch = Instant.now().minus(periodInMinutes, ChronoUnit.MINUTES)
         val mergeRequests =
-            mergeRequestService.getAllByLastModifiedDateLessThan(dateToSearch)
+            mergeRequestService.getByApproveAndLastModifiedDateLessThan(approve = false, dateToSearch)
 
         val messagesWithoutMergeRequests = messageService.getAllWithoutMergeRequests()
         messagesWithoutMergeRequests.forEach { telegramService.deleteMessage(it.id, it.chatId) }
@@ -66,5 +66,7 @@ class SendMessageJob(
                     )
                 )
             }
+
+        // todo добавить отправку сообщения создателю МРа, чтобы уведомить о готовности мерджится
     }
 }

@@ -4,14 +4,13 @@ import com.github.jooq.tables.references.MERGE_REQUESTS
 import com.github.jooq.tables.references.MESSAGES
 import org.jooq.DSLContext
 import org.jooq.Record
-import org.jooq.RecordMapper
 import org.springframework.stereotype.Repository
 
 @Repository
 internal class JooqMessageRepository(
     private val dslContext: DSLContext
 ) : MessageRepository {
-    private val mapper: RecordMapper<Record, Message> = RecordMapper {
+    private val mapper: (Record) -> Message = {
         Message(
             it.get(MESSAGES.ID)!!,
             it.get(MESSAGES.CHAT_ID)!!,

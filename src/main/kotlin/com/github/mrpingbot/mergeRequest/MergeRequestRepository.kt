@@ -7,7 +7,7 @@ interface MergeRequestRepository {
 
     fun findById(id: Long): MergeRequest?
 
-    fun findAllByLastModifiedDateLessThan(date: Instant): List<MergeRequest>
+    fun findByApproveAndLastModifiedDateLessThan(approve: Boolean, date: Instant): List<MergeRequest>
 
     fun update(mergeRequest: MergeRequest)
 

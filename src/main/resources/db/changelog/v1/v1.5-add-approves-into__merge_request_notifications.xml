@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="v1.5-add-approve-into__merge_request_notifications" author="vlad.bakshanskij">
+        <preConditions>
+            <tableExists tableName="merge_request_notifications" schemaName="ping_bot"/>
+            <not>
+                <columnExists tableName="merge_request_notifications" schemaName="ping_bot" columnName="approve"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="merge_request_notifications" schemaName="ping_bot">
+            <column name="approve" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

@@ -2,7 +2,9 @@ package com.github.mrpingbot.gitlab
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.mrpingbot.common.PagedResult
 import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequest
+import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequestApprove
 import com.github.mrpingbot.gitlab.dto.response.GitlabMergeRequestComment
 import com.github.mrpingbot.gitlab.dto.response.GitlabProject
 import org.slf4j.Logger
@@ -90,12 +92,65 @@ internal class SimpleGitlabClient(
         )
 
         val openConnection =
-            URL("$url/projects/$encodedProjectId/merge_requests/$mergeRequestIid/notes").openConnection() as HttpURLConnection
+            URL("$url/projects/$encodedProjectId/merge_requests/$mergeRequestIid/notes?per_page=100").openConnection() as HttpURLConnection
         openConnection.requestMethod = HttpMethod.GET.name()
         openConnection.setRequestProperty("PRIVATE-TOKEN", token)
         logger.debug("Request URL {} HEADERS {}", url, openConnection.requestProperties)
         val response: List<GitlabMergeRequestComment> =
             openConnection.inputStream.use { objectMapper.readValue<List<GitlabMergeRequestComment>>(it) }
+        logger.debug("RESPONSE FOR URL {} BODY {}", url, response)
+        openConnection.disconnect()
+        return response
+    }
+
+    override fun getMergeRequestsByStatus(
+        projectId: String,
+        statutes: List<String>,
+        page: Int,
+        pageSize: Int
+    ): PagedResult<GitlabMergeRequest> {
+        val encodedProjectId = URLEncoder.encode(
+            projectId,
+            StandardCharsets.UTF_8
+        )
+
+        val query = statutes.joinToString(QUERY_SEPARATOR) { "state=$it" }
+
+        val uri = "$url/projects/$encodedProjectId/merge_requests/?$query&page=$page&per_page=$pageSize"
+        val openConnection =
+            URL(uri).openConnection() as HttpURLConnection
+        openConnection.requestMethod = HttpMethod.GET.name()
+        openConnection.setRequestProperty("PRIVATE-TOKEN", token)
+        logger.debug("Request URL {} HEADERS {}", uri, openConnection.requestProperties)
+        val response: List<GitlabMergeRequest> =
+            openConnection.inputStream.use { objectMapper.readValue<List<GitlabMergeRequest>>(it) }
+        logger.debug("RESPONSE FOR URL {} BODY {}", uri, response)
+        val total = openConnection.getHeaderFieldLong("x-total", 0)
+        openConnection.disconnect()
+        return PagedResult(
+            page,
+            pageSize,
+            total,
+            response
+        )
+    }
+
+    override fun getMergeRequestApprovals(
+        projectId: String,
+        mergeRequestIid: Long
+    ): GitlabMergeRequestApprove {
+        val encodedProjectId = URLEncoder.encode(
+            projectId,
+            StandardCharsets.UTF_8
+        )
+
+        val openConnection =
+            URL("$url/projects/$encodedProjectId/merge_requests/$mergeRequestIid/approvals").openConnection() as HttpURLConnection
+        openConnection.requestMethod = HttpMethod.GET.name()
+        openConnection.setRequestProperty("PRIVATE-TOKEN", token)
+        logger.debug("Request URL {} HEADERS {}", url, openConnection.requestProperties)
+        val response: GitlabMergeRequestApprove =
+            openConnection.inputStream.use { objectMapper.readValue<GitlabMergeRequestApprove>(it) }
         logger.debug("RESPONSE FOR URL {} BODY {}", url, response)
         openConnection.disconnect()
         return response

@@ -10,8 +10,8 @@ class MergeRequestService(private val mergeRequestRepository: MergeRequestReposi
         return foundedMergeRequest ?: mergeRequestRepository.save(mergeRequest)
     }
 
-    fun getAllByLastModifiedDateLessThan(date: Instant): List<MergeRequest> =
-        mergeRequestRepository.findAllByLastModifiedDateLessThan(date)
+    fun getByApproveAndLastModifiedDateLessThan(approve: Boolean, date: Instant): List<MergeRequest> =
+        mergeRequestRepository.findByApproveAndLastModifiedDateLessThan(approve, date)
 
     fun update(
         mergeRequest: MergeRequest
@@ -20,4 +20,6 @@ class MergeRequestService(private val mergeRequestRepository: MergeRequestReposi
     fun getAllByStatuses(
         statuses: List<String>
     ): List<MergeRequest> = mergeRequestRepository.findAllByStatuses(statuses)
+
+    fun existsById(id: Long): Boolean = mergeRequestRepository.findById(id) != null
 }
