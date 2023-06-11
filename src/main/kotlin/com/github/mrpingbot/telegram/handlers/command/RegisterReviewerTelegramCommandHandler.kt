@@ -3,11 +3,15 @@ package com.github.mrpingbot.telegram.handlers.command
 import com.github.mrpingbot.rewiever.Reviewer
 import com.github.mrpingbot.rewiever.ReviewerService
 import com.github.mrpingbot.telegram.dto.common.TelegramMessage
+import com.github.mrpingbot.utils.getMessage
+import org.springframework.context.MessageSource
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class RegisterReviewerTelegramCommandHandler(
-    private val reviewerService: ReviewerService
+    private val reviewerService: ReviewerService,
+    private val messageSource: MessageSource,
 ) : TelegramCommandHandler {
     companion object {
         private val GITLAB_USERNAME_REGEX: Regex = Regex("@gitlab:(\\w+)")
@@ -20,16 +24,17 @@ class RegisterReviewerTelegramCommandHandler(
         val text = message.text!!
 
         val gitlabUsername = GITLAB_USERNAME_REGEX.find(text)?.groupValues?.get(GITLAB_USERNAME_INDEX)
-            ?: return "Не указано имя пользователя в gitlab"
-        val telegramUser = message.from ?: return "Пользователь телеграм не был получен"
-        val telegramUsername = telegramUser.username ?: "Не удалось получить имя пользователя в телеграм"
+            ?: return messageSource.getMessage("command.reviewer.gitlab_username_not_present")
+
+        val telegramUser = message.from
+            ?: return messageSource.getMessage("command.reviewer.telegram_user_not_received")
+        val telegramUsername = telegramUser.username
+            ?: return messageSource.getMessage("command.reviewer.telegram_username_not_received")
+
         val personalChatId = message.chat.id
 
         if (reviewerService.existsByGitlabUsername(gitlabUsername)) {
-            return """
-                Ревьювер с таким именем в gitlab уже есть. 
-                Обратитесь к администратору, чтобы удалить/обновить ваши данные.
-            """.trimIndent()
+            return messageSource.getMessage("command.reviewer.already_exists", emptyArray(), Locale.ROOT)
         }
 
         val reviewer = reviewerService.findById(telegramUser.id)
@@ -43,10 +48,10 @@ class RegisterReviewerTelegramCommandHandler(
                 )
             )
 
-            return "Ревьювер зарегистрован"
+            return messageSource.getMessage("command.reviewer.registered", emptyArray(), Locale.ROOT)
         }
 
         reviewerService.update(reviewer.updatePersonalChatAndGitlabUsername(personalChatId, gitlabUsername))
-        return "Данные о ревьювере были обновлены"
+        return messageSource.getMessage("command.reviewer.updated", emptyArray(), Locale.ROOT)
     }
 }
