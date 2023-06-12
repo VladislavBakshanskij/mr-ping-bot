@@ -67,6 +67,21 @@ class SendMessageJob(
                 )
             }
 
-        // todo добавить отправку сообщения создателю МРа, чтобы уведомить о готовности мерджится
+        // отправляем МРы, которые готовы для заливки
+        mergeRequestService.getByApproveAndLastModifiedDateLessThan(approve = true, dateToSearch)
+            .groupBy { it.authorId }
+            .mapKeys { reviewerService.findById(it.key)!! }
+            .filterKeys { it.personalChatId != null }
+            .forEach { (author, mergeRequests) ->
+                telegramService.sendMessage(
+                    author.personalChatId!!,
+                    """
+                       Следующие МРы готоы для деплоя:
+                       
+                       ${mergeRequests.joinToString("\n") { it.link }}
+                    """.trimIndent()
+                )
+                mergeRequestService.deleteAll(mergeRequests)
+            }
     }
 }

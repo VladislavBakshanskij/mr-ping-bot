@@ -1,9 +1,9 @@
 package com.github.mrpingbot.telegram.handlers.command
 
 import com.github.mrpingbot.telegram.dto.common.TelegramMessage
+import com.github.mrpingbot.utils.getMessage
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class StartTelegramCommandHandler(private val messageSource: MessageSource) : TelegramCommandHandler {
@@ -11,5 +11,5 @@ class StartTelegramCommandHandler(private val messageSource: MessageSource) : Te
 
     override fun handle(
         message: TelegramMessage
-    ): String = messageSource.getMessage("command.welcome", emptyArray(), Locale.ROOT)
+    ): String = messageSource.getMessage("command.welcome")
 }

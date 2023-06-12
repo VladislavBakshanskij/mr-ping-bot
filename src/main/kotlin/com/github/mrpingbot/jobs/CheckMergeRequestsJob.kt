@@ -83,6 +83,7 @@ class CheckMergeRequestsJob(
                             it.createdAt,
                             it.status,
                             it.updatedAt,
+                            reviewerService.findByGitlabUsername(it.author.username)!!.id
                         )
                     }
                     .forEach { mergeRequestService.createIfNotExists(it) }

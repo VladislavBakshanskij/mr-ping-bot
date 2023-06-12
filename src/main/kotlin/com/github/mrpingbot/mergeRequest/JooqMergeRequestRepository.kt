@@ -22,6 +22,7 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
             it.get(MERGE_REQUESTS.CREATE_DATETIME)?.toInstant(ZoneOffset.UTC),
             it.get(MERGE_REQUESTS.STATUS)!!,
             it.get(MERGE_REQUESTS.LAST_MODIFY_DATETIME)?.toInstant(ZoneOffset.UTC),
+            it.get(MERGE_REQUESTS.AUTHOR_ID)!!
         )
     }
 
@@ -91,4 +92,10 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
         .fetch()
         .map(mapper)
         .toList()
+
+    override fun deleteAll(mergeRequests: List<MergeRequest>) {
+        dslContext.deleteFrom(MERGE_REQUESTS)
+            .where(MERGE_REQUESTS.ID.`in`(mergeRequests.map { it.id }))
+            .execute()
+    }
 }
