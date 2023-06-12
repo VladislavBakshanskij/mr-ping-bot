@@ -58,7 +58,7 @@ abstract class AbstractTelegramEventHandler(
 
             // человек, который прислал МР тоже может быть ревьювером какого-то МРа.
             // сохраним, чтобы потом можно было легко вести поиск
-            reviewerService.createIfNotExists(
+            val reviewer = reviewerService.createIfNotExists(
                 Reviewer(
                     telegramMessage.from!!.id,
                     telegramMessage.from.username,
@@ -76,6 +76,7 @@ abstract class AbstractTelegramEventHandler(
                     gitlabMergeRequest.createdAt,
                     gitlabMergeRequest.status,
                     Instant.now(),
+                    reviewer.id
                 )
             )
         }

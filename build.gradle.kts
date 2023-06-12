@@ -46,7 +46,11 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock")
+    testImplementation("io.mockk:mockk:1.12.4")
+    testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
+    testImplementation("io.kotest:kotest-assertions-core:5.6.2")
+    testImplementation("org.jeasy:easy-random-core:5.0.0")
 }
 
 jooq {

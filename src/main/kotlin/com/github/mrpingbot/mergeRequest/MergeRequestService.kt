@@ -22,4 +22,6 @@ class MergeRequestService(private val mergeRequestRepository: MergeRequestReposi
     ): List<MergeRequest> = mergeRequestRepository.findAllByStatuses(statuses)
 
     fun existsById(id: Long): Boolean = mergeRequestRepository.findById(id) != null
+
+    fun deleteAll(mergeRequests: List<MergeRequest>) = mergeRequestRepository.deleteAll(mergeRequests)
 }

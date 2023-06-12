@@ -12,6 +12,7 @@ data class MergeRequest(
     val createDatetime: Instant?,
     val status: String,
     val lastModifiedDatetime: Instant?,
+    val authorId: Long,
 ) {
     fun updateLastModifiedDate(
         lastModifiedDatetime: Instant
@@ -24,7 +25,8 @@ data class MergeRequest(
         wip,
         createDatetime,
         status,
-        lastModifiedDatetime
+        lastModifiedDatetime,
+        authorId
     )
 
     fun updateMessageId(
@@ -38,7 +40,8 @@ data class MergeRequest(
         wip,
         createDatetime,
         status,
-        Instant.now()
+        Instant.now(),
+        authorId
     )
 
     fun updateStatus(
@@ -52,6 +55,7 @@ data class MergeRequest(
         wip,
         createDatetime,
         status,
-        Instant.now()
+        Instant.now(),
+        authorId
     )
 }

@@ -12,4 +12,6 @@ interface MergeRequestRepository {
     fun update(mergeRequest: MergeRequest)
 
     fun findAllByStatuses(statuses: List<String>): List<MergeRequest>
+
+    fun deleteAll(mergeRequests: List<MergeRequest>)
 }

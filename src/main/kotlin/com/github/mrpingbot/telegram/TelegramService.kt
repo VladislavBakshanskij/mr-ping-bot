@@ -36,11 +36,11 @@ class TelegramService(
     ).result
 
     fun deleteMessage(
-        id: Long,
+        messageId: Long,
         chatId: Long
     ) = telegramClient.deleteMessage(
         DeleteMessageRequest(
-            id, chatId
+            messageId, chatId
         )
     )
 
