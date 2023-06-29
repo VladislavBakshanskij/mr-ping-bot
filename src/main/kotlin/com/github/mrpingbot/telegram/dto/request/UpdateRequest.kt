@@ -24,6 +24,9 @@ data class ChatMember(
 
 enum class ChatMemberStatus {
     LEFT,
-    MEMBER
+    MEMBER,
+    ADMINISTRATOR,
+    OWNER,
+    BOT
 }
 

@@ -35,6 +35,7 @@ internal class JooqMergeRequestRepository(private val dslContext: DSLContext) : 
             .set(MERGE_REQUESTS.LINK, mergeRequest.link)
             .set(MERGE_REQUESTS.WIP, mergeRequest.wip)
             .set(MERGE_REQUESTS.STATUS, mergeRequest.status)
+            .set(MERGE_REQUESTS.AUTHOR_ID, mergeRequest.authorId)
             .set(
                 MERGE_REQUESTS.CREATE_DATETIME,
                 LocalDateTime.ofInstant(mergeRequest.createDatetime, ZoneOffset.systemDefault())
